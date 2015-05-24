@@ -125,7 +125,6 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 		//Der Text ist zu lang und kann nicht dargestellt werden.
 		else
 		{
-			DisplayError("FEHLERCODE: 1\nFunktion: DisplayMaster\n");
 			retVal = MM_TFT_TEXT_TO_LONG;
 		}
 
