@@ -52,7 +52,7 @@
 //Display
 int DisplayMaster(String, boolean);
 void DisplayError(String);
-void TFTInit(boolean);
+int TFTInit(boolean);
 
 
 

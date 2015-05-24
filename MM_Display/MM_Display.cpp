@@ -14,26 +14,29 @@ static int DisplayPosition = 0;
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET);
 
 
-void DisplayError(String sErrorText)
+void DisplayError(String sErrorText, boolean DebugDisplay)
 {
-    tft.fillScreen(WHITE);
-    tft.setCursor(0, 0);
-    tft.setTextColor(RED);
-    tft.print(sErrorText);
-    tft.setTextColor(BLACK);
+	if (DebugDisplay == true)
+	{
+	    tft.fillScreen(WHITE);
+	    tft.setCursor(0, 0);
+	    tft.setTextColor(RED);
+	    tft.print(sErrorText);
+	    tft.setTextColor(BLACK);
+	}
 }
 
 
 int DisplayMaster(String sText, boolean DebugDisplay)
 {
-	int retVal = TFT_NO_DISPLAY;
+	int retVal = MM_TFT_NO_DISPLAY;
 
 	if (DebugDisplay == true)
 	{
 
 		tft.setCursor(0, 0);
 		int textLaenge = sText.length();
-		retVal = UNDEFINED_ERROR;
+		retVal = MM_UNDEFINED_ERROR;
 
 
 		/*
@@ -117,14 +120,14 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 					DisplayMaster(sText, DebugDisplay); //Rufe dich selbst nocheinmal auf, den nun ist genug Platz im vorhanden.
 				}
 
-			retVal = SUCCESS;
+			retVal = MM_SUCCESS;
 		}
 
 		//Der Text ist zu lang und kann nicht dargestellt werden.
 		else
 		{
 			DisplayError("FEHLERCODE: 1\nFunktion: DisplayMaster\n");
-			retVal = TFT_TEXT_TO_LONG;
+			retVal = MM_TFT_TEXT_TO_LONG;
 		}
 
 	}
@@ -133,8 +136,10 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 }
 
 
-void TFTInit(boolean DebugDisplay)
+int TFTInit(boolean DebugDisplay)
 {
+	int retVal = MM_UNDEFINED_ERROR;
+
 	if (DebugDisplay == true)
 	{
 		  Serial.println(F("TFT LCD test"));
@@ -148,22 +153,27 @@ void TFTInit(boolean DebugDisplay)
 		  if(identifier == 0x9325)
 		  {
 		    Serial.println(F("Found ILI9325 LCD driver"));
+		    retVal = MM_SUCCESS;
 		  }
 		  else if(identifier == 0x9328)
 		  {
 		    Serial.println(F("Found ILI9328 LCD driver"));
+		    retVal = MM_SUCCESS;
 		  }
 		  else if(identifier == 0x7575)
 		  {
 		    Serial.println(F("Found HX8347G LCD driver"));
+		    retVal = MM_SUCCESS;
 		  }
 		  else if(identifier == 0x9341)
 		  {
 		    Serial.println(F("Found ILI9341 LCD driver"));
+		    retVal = MM_SUCCESS;
 		  }
 		  else if(identifier == 0x8357)
 		  {
 		    Serial.println(F("Found HX8357D LCD driver"));
+		    retVal = MM_SUCCESS;
 		  }
 		  else
 		  {
@@ -175,7 +185,8 @@ void TFTInit(boolean DebugDisplay)
 		    Serial.println(F("If using the breakout board, it should NOT be #defined!"));
 		    Serial.println(F("Also if using the breakout, double-check that all wiring"));
 		    Serial.println(F("matches the tutorial."));
-		    return;
+		    retVal = MM_UNDEFINED_ERROR;
+
 		  }
 
 		  tft.setRotation(TFT_ROTATION);
@@ -184,4 +195,5 @@ void TFTInit(boolean DebugDisplay)
 		  tft.setTextSize(TFT_TEXT_SIZE);
 		  tft.begin(identifier);
 	}
+	return retVal;
   }
