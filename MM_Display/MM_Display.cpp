@@ -7,7 +7,6 @@
 static char Displaychars[TFT_ZEICHEN];
 static int DisplayPosition = 0;
 
-
 //#############################
 //Objects                     #
 //#############################
