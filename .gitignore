@@ -26,3 +26,16 @@
 *.exe
 *.out
 *.app
+
+
+#USER DEFINED IGNORES
+*.bin
+*.d
+*.elf
+*.map
+*.mk
+*.ar
+.settings
+Release
+.cproject
+.project
