@@ -1,4 +1,4 @@
 # MM_Projects
 Messprogramm für das Arduino Due
 
-Tipp: ArduinoIDE Verion 1.5.5-r2 im Ordner "D:\Programing\arduino-1.5.5-r2" ablegen. Da die .project datei von Eclipse mit in Github liegt.
+Tipp: Erstellen eines neuen lokalen Projekts in Eclipse (EclipseWorkspace) und nur die *.cpp und *.h Files in das neue lokale Projekt linken!

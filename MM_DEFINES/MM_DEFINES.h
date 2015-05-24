@@ -22,8 +22,7 @@ enum MM_ERRORS{SUCCESS, UNDEFINED_ERROR, TFT_TEXT_TO_LONG, TFT_NO_DISPLAY};
 #ifdef __cplusplus
 extern "C" {
 #endif
-void loop();
-void setup();
+
 #ifdef __cplusplus
 } // extern "C"
 #endif
