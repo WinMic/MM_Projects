@@ -12,7 +12,7 @@ enum MM_ERRORS{MM_SUCCESS, MM_UNDEFINED_ERROR, MM_TFT_TEXT_TO_LONG, MM_TFT_NO_DI
 
 
 
-
+void SerialPrintln(String , boolean);
 
 
 
