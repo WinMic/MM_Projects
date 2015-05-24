@@ -139,7 +139,7 @@ int TFTInit(boolean DebugPC)
 {
 	int retVal = MM_UNDEFINED_ERROR;
 
-	if (DebugDisplay == true)
+	if (DebugPC == true)
 	{
 
 		  SerialPrintln("TFT LCD test", DebugPC);
