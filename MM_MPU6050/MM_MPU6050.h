@@ -9,7 +9,7 @@
 #include "Arduino.h"
 #include "I2Cdev.h"
 #include "MPU60X0.h"
-
+#include "MM_DEFINES.h"
 
 
 //end of add your includes here
@@ -17,7 +17,8 @@
 extern "C" {
 #endif
 
-
+int MPUInit(boolean);
+void MPUData(int16_t* , int16_t* , int16_t* , int16_t* , int16_t* , int16_t*);
 
 
 #ifdef __cplusplus
