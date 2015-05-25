@@ -9,3 +9,11 @@ void SerialPrintln(String sText, boolean DebugPC)
 		Serial.println(sText);
 	}
 }
+
+void SerialPrint(String sText, boolean DebugPC)
+{
+	if (DebugPC == true)
+	{
+		Serial.print(sText);
+	}
+}
