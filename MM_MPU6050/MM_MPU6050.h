@@ -4,33 +4,30 @@
 // - extern variable definitions
 // In the appropriate section
 
-#ifndef _MM_DEFINES_H_
-#define _MM_DEFINES_H_
+#ifndef _MM_MPU6050_H_
+#define _MM_MPU6050_H_
 #include "Arduino.h"
-
-enum MM_ERRORS{MM_SUCCESS, MM_UNDEFINED_ERROR, MM_TFT_TEXT_TO_LONG, MM_TFT_NO_DISPLAY, MM_SD_NO_CARDREADER, MM_SD_WRONG_FORMAT, MM_SD_NO_FILE_POINTER};
-
-
-
-void SerialPrintln(String , boolean);
+#include "I2Cdev.h"
+#include "MPU60X0.h"
 
 
 
-
-
-
+//end of add your includes here
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
-
+//add your function definitions for the project MM_MPU6050 here
 
 
 
 
 //Do not add code below this line
-#endif /* _MM_DEFINES_H_ */
+#endif /* _MM_MPU6050_H_ */
