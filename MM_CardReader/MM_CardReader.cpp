@@ -57,7 +57,7 @@ int SDInit(const char* FileName, boolean DebugPC)
 		{
 			SerialPrintln("Could not find FAT16/FAT32 partition. Make sure you've formatted the card", DebugPC);
 
-			retVal = MM_WRONG_SD_FORMAT;
+			retVal = MM_SD_WRONG_FORMAT;
 		}
 		else
 		{
@@ -102,7 +102,7 @@ int SDInit(const char* FileName, boolean DebugPC)
 				}
 				else
 				{
-					retVal = MM_NO_FILE_POINTER;
+					retVal = MM_SD_NO_FILE_POINTER;
 				}
 
 			}
