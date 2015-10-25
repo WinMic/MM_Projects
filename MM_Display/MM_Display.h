@@ -14,6 +14,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_TFTLCD.h>
 #include <MM_DEFINES.h>
+#include "string.h"
 
 
 
@@ -51,6 +52,7 @@
 
 //Display
 int DisplayMaster(String, boolean);
+int DisplayPrint(String, boolean);
 void DisplayError(String);
 int TFTInit(boolean);
 

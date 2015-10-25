@@ -26,10 +26,49 @@ void DisplayError(String sErrorText, boolean DebugDisplay)
 }
 
 
+int DisplayPrint(String sText, boolean DebugDisplay)
+{
+	short retVal = MM_TFT_NO_DISPLAY;
+
+	if (DebugDisplay)
+	{
+
+		//wie lange ist der String?
+		short textLaenge = sText.length();
+
+		//anzahl der vollen Zeilen
+		byte zeilen = textLaenge / TFT_ZEICHEN_IN_ZEILE;
+
+		//Diese anzahl von zeichen wird benötigt um alle Zeichen der Zeilen voll zu schreiben
+		byte sollZeichen = (zeilen+1)*TFT_ZEICHEN_IN_ZEILE;
+
+		byte benoetigteZeichen = sollZeichen - textLaenge;
+
+		//ist das letzte Element des Strings ein Newline?
+		if (sText[textLaenge-1] == '\n')
+		{
+			//ersetze das \n durch ein Leerzeichen
+			sText[textLaenge-1] = ' ';
+
+			//ersetze alle benötigten zeichen (außer das \n das ist ja shcon ersetzt) durch leerzeichen
+			for (short i = 0; i < benoetigteZeichen; i++)
+			{
+				sText = sText + ' ';
+			}
+
+
+
+		}
+		//nun, übergebe den Text an die DisplayMaster Funktion (auch wenn garkein \n enthalten war)
+		retVal = DisplayMaster(sText, DebugDisplay);
+	}
+
+	return retVal;
+}
+
 int DisplayMaster(String sText, boolean DebugDisplay)
 {
 	int retVal = MM_TFT_NO_DISPLAY;
-
 	if (DebugDisplay == true)
 	{
 
