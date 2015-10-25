@@ -68,12 +68,12 @@ int DisplayPrint(String sText, boolean DebugDisplay)
 
 int DisplayMaster(String sText, boolean DebugDisplay)
 {
-	int retVal = MM_TFT_NO_DISPLAY;
+	short retVal = MM_TFT_NO_DISPLAY;
 	if (DebugDisplay == true)
 	{
 
 		tft.setCursor(0, 0);
-		int textLaenge = sText.length();
+		short textLaenge = sText.length();
 		retVal = MM_UNDEFINED_ERROR;
 
 
@@ -93,7 +93,7 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 				/*
 				 * Gehe den gesammten Text durch und überprüfe ob an der 1.Stelle einer jeden Zeile ein Leerzeichen ist. Wenn Ja wird diesen entfernt.
 				 */
-				for (int i = 0; i <= textLaenge; i++)
+				for (short i = 0; i <= textLaenge; i++)
 				{
 					if ((i == 0) || (i%26 == 0) ) 	//Prüft den 1. Buchstaben in jeder Zeile
 					{
@@ -118,14 +118,14 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 
 				//Schreibe den alten Text in Schwarz auf das Display
 				tft.setTextColor(BLACK);
-				for (int i = 0; i < DisplayPosition-textLaenge; i++)
+				for (short i = 0; i < DisplayPosition-textLaenge; i++)
 				{
 					tft.print(Displaychars[i]);
 				}
 
 				//Schreibe den neuen Text in Blau auf das Display
 				tft.setTextColor(BLUE);
-				for (int i = DisplayPosition-textLaenge; i < DisplayPosition; i++)
+				for (short i = DisplayPosition-textLaenge; i < DisplayPosition; i++)
 				{
 					tft.print(Displaychars[i]);
 				}
@@ -147,7 +147,7 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 					 * Shifte mir die Anzahl der noch benötigten Plätze, damit der gesamte Text
 					 * dargestellt werden kann.
 					 */
-					for (int i = 0; i <= TFT_ZEICHEN-shiftNumber; i++)
+					for (short i = 0; i <= TFT_ZEICHEN-shiftNumber; i++)
 					{
 					  Displaychars[i] = Displaychars[i+shiftNumber];
 					}
@@ -175,7 +175,7 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 
 int TFTInit(boolean DebugPC)
 {
-	int retVal = MM_UNDEFINED_ERROR;
+	short retVal = MM_UNDEFINED_ERROR;
 
 	if (DebugPC == true)
 	{
