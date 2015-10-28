@@ -80,36 +80,41 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 		/*
 		 * Kann der Text dargestellt werden? Oder ist er zulang für das Display?
 		 */
-
 		if(textLaenge <= TFT_ZEICHEN)
 		{
-			/*
-			 * Gibt es noch genug freien Platz für den Text?
-			 * Wenn Ja füge den neuen Text hinten an das Displaychars-Array an.
-			 */
+
+		//ist das letzte Element des Strings ein Newline?
+		if (sText[textLaenge-1] == '\n')
+		{
+			//anzahl der vollen Zeilen
+			byte zeilen = textLaenge / TFT_ZEICHEN_IN_ZEILE;
+
+			//Diese anzahl von zeichen wird benötigt um alle Zeichen der Zeilen voll zu schreiben
+			byte sollZeichen = (zeilen+1)*TFT_ZEICHEN_IN_ZEILE;
+
+			byte benoetigteZeichen = sollZeichen - textLaenge - DisplayPosition%TFT_ZEICHEN_IN_ZEILE;
+
+			//ersetze das \n durch ein Leerzeichen
+			sText[textLaenge-1] = ' ';
+
+			//ersetze alle benötigten zeichen (außer das \n das ist ja shcon ersetzt) durch leerzeichen
+			for (short i = 0; i < benoetigteZeichen; i++)
+			{
+				sText = sText + ' ';
+				textLaenge = textLaenge + 1;
+			}
+
+		}
+				/*
+				 * Gibt es noch genug freien Platz für den Text?
+				 * Wenn Ja füge den neuen Text hinten an das Displaychars-Array an.
+				 */
 			if(textLaenge <= (TFT_ZEICHEN-DisplayPosition))
 			{
-
-				/*
-				 * Gehe den gesammten Text durch und überprüfe ob an der 1.Stelle einer jeden Zeile ein Leerzeichen ist. Wenn Ja wird diesen entfernt.
-				 */
 				for (short i = 0; i <= textLaenge; i++)
 				{
-					if ((i == 0) || (i%26 == 0) ) 	//Prüft den 1. Buchstaben in jeder Zeile
-					{
-						if (sText[i] == ' ')		//Ist der Buchstabe ein Leerzeichen?
-						{
-							for (int j = i;  j <= (textLaenge); j++)	//Wenn Ja gehe den gesammten Text durch und verschiebe alles um eine Position nach Links (überschreiben des Leerzeichens)
-							{
-								sText[j] = sText[j+1];
-							}
-							textLaenge = textLaenge - 1;				//Da wir ein Leerzeichen überschrieben haben, ist der Text somit um eins kürzer
-
-						}
-					}
-					Displaychars[i+DisplayPosition] = sText[i];			//Der angepasste Text wird in den "Virtuellen Display" geschrieben.
+					Displaychars[DisplayPosition+i] = sText[i];			//Der angepasste Text wird in den "Virtuellen Display" geschrieben.
 				}
-
 
 				//Den "Offset" des gesamten Textes speichern
 				DisplayPosition = DisplayPosition + textLaenge;
@@ -140,19 +145,16 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 				 */
 				else
 				{
-					int charUebrig = TFT_ZEICHEN-DisplayPosition; //Wieviele Zeichen sind noch frei?
-					int shiftNumber = textLaenge-charUebrig; //Wie viele Plätze muss ich Shiften?
-
 					/*
-					 * Shifte mir die Anzahl der noch benötigten Plätze, damit der gesamte Text
-					 * dargestellt werden kann.
+					 * Shifte den gesamten Text um eine Zeile, damit die Leerzeichen, die newlines ersetzen noch passend stehen.
+					 * Wenn das Shiften um eine Zeile nicht ausreicht, wird beim nächsten durchlauf noch einmal geshiftet, bis es klappt.
 					 */
-					for (short i = 0; i <= TFT_ZEICHEN-shiftNumber; i++)
+					for (short i = 0; i <= TFT_ZEICHEN-TFT_ZEICHEN_IN_ZEILE; i++)
 					{
-					  Displaychars[i] = Displaychars[i+shiftNumber];
+					  Displaychars[i] = Displaychars[i+TFT_ZEICHEN_IN_ZEILE];
 					}
 
-					DisplayPosition = DisplayPosition - shiftNumber;
+					DisplayPosition = DisplayPosition - TFT_ZEICHEN_IN_ZEILE;
 
 
 					DisplayMaster(sText, DebugDisplay); //Rufe dich selbst nocheinmal auf, den nun ist genug Platz im vorhanden.
