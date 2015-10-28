@@ -52,7 +52,6 @@
 
 //Display
 int DisplayMaster(String, boolean);
-int DisplayPrint(String, boolean);
 void DisplayError(String);
 int TFTInit(boolean);
 
