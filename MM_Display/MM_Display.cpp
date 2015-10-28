@@ -65,6 +65,7 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 			}
 
 		}
+
 				/*
 				 * Gibt es noch genug freien Platz für den Text?
 				 * Wenn Ja füge den neuen Text hinten an das Displaychars-Array an.
