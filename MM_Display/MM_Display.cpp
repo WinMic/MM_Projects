@@ -121,7 +121,7 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 				DisplayMaster(sText, DebugDisplay); //Rufe dich selbst nocheinmal auf, den nun ist genug Platz im vorhanden.
 			}
 
-		retVal = MM_SUCCESS;
+			retVal = MM_SUCCESS;
 		}
 
 		//Der Text ist zu lang und kann nicht dargestellt werden.
