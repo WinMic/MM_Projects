@@ -27,6 +27,16 @@ void DisplayError(String sErrorText, boolean DebugDisplay)
 
 
 int DisplayMaster(String sText, boolean DebugDisplay)
+/*
+ * Stellt einen Beliebigen Text auf dem Display dar.
+ *
+ * Übergabewerte:
+ * -------------
+ *
+ * sText: ein String, der mit "\n" terminiert werden sollte
+ *
+ * DebugDisplay: Typ boolean, der das darstellen auf dem Display ein-/ausschaltet
+ */
 {
 	short retVal = MM_TFT_NO_DISPLAY;
 	if (DebugDisplay == true)
