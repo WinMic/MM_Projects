@@ -200,7 +200,7 @@ int TFTInit(boolean DebugPC)
 		    SerialPrintln("If using the breakout board, it should NOT be #defined!", DebugPC);
 		    SerialPrintln("Also if using the breakout, double-check that all wiring", DebugPC);
 		    SerialPrintln("matches the tutorial.", DebugPC);
-		    retVal = MM_UNDEFINED_ERROR;
+		    retVal = MM_TFT_NO_DISPLAY;
 
 		  }
 
