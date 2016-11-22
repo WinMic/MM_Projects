@@ -15,15 +15,6 @@ enum MM_ERRORS{MM_SUCCESS, MM_UNDEFINED_ERROR,
 /*MPU*/		   MM_MPU_INIT_ERROR,
 /*Kompass*/	   MM_HMC_INIT_ERROR};
 
-
-void SerialPrintln(String , boolean);
-void SerialPrint(String, boolean);
-
-
-
-
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
