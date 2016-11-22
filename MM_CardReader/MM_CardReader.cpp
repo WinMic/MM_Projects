@@ -9,10 +9,10 @@ static SdFile root;
 const int SD_chipSelect = 4;
 File myFile;
 
-int SDInit(const char* FileName, boolean DebugPC)
+int SDInit(const char* FileName)
 {
 	short retVal = MM_UNDEFINED_ERROR;
-	SerialPrintln("\nInitializing SD card..." , DebugPC);
+	Serial.println("\nInitializing SD card...");
 
 	pinMode(SD_chipSelect, OUTPUT);     //Arduino Due SD_chipSelect ist Pin 4 (Siehe PinOut)
 
@@ -20,42 +20,42 @@ int SDInit(const char* FileName, boolean DebugPC)
 	//Initialisiere den SD Card Reader
 	if (!card.init(SPI_HALF_SPEED, SD_chipSelect))
 	{
-		SerialPrintln("initialization failed. Things to check:" , DebugPC);
-		SerialPrintln("* is a card is inserted?" , DebugPC);
-		SerialPrintln("* Is your wiring correct?" , DebugPC);
-		SerialPrintln("* did you change the chipSelect pin to match your shield or module?" , DebugPC);
+		Serial.println("initialization failed. Things to check:");
+		Serial.println("* is a card is inserted?");
+		Serial.println("* Is your wiring correct?");
+		Serial.println("* did you change the chipSelect pin to match your shield or module?");
 		retVal = MM_SD_NO_CARDREADER;
 	}
 	else
 	{
-		SerialPrintln("Wiring is correct and a card is present." , DebugPC);
+		Serial.println("Wiring is correct and a card is present.");
 		retVal = MM_SUCCESS;
 
 
 		//Gebe den SDKarten Typ aus
-		SerialPrintln("\nCard type: ", DebugPC);
+		Serial.println("\nCard type: ");
 		switch(card.type())
 		{
 			case SD_CARD_TYPE_SD1:
-				SerialPrintln("SD1", DebugPC);
+				Serial.println("SD1");
 				break;
 
 			case SD_CARD_TYPE_SD2:
-				SerialPrintln("SD2", DebugPC);
+				Serial.println("SD2");
 				break;
 
 			case SD_CARD_TYPE_SDHC:
-				SerialPrintln("SDHC", DebugPC);
+				Serial.println("SDHC");
 				break;
 
 			default:
-				SerialPrintln("Unknown", DebugPC);
+				Serial.println("Unknown");
 		}
 
 		// Öffnen der Partition
 		if (!volume.init(card))
 		{
-			SerialPrintln("Could not find FAT16/FAT32 partition. Make sure you've formatted the card", DebugPC);
+			Serial.println("Could not find FAT16/FAT32 partition. Make sure you've formatted the card");
 
 			retVal = MM_SD_WRONG_FORMAT;
 		}
@@ -63,33 +63,31 @@ int SDInit(const char* FileName, boolean DebugPC)
 		{
 			//Gebe den Formattyp aus (Fat16 / Fat32)
 			uint32_t volumesize;
-			SerialPrintln("\nVolume type is FAT", DebugPC);
-			SerialPrintln((String)volume.fatType(), DebugPC);
+			Serial.println("\nVolume type is FAT");
+			Serial.println((String)volume.fatType());
 			//Serial.println(volume.fatType(), DEC);
-			SerialPrintln("\n", DebugPC);
+			Serial.println("\n");
 
 			volumesize = volume.blocksPerCluster();
 			volumesize *= volume.clusterCount();
 			volumesize *= 512;
-			SerialPrintln("Volume size (bytes): ", DebugPC);
-			SerialPrintln((String)volumesize, DebugPC);
-			SerialPrintln("Volume size (Kbytes): ", DebugPC);
+			Serial.println("Volume size (bytes): ");
+			Serial.println((String)volumesize);
+			Serial.println("Volume size (Kbytes): ");
 			volumesize /= 1024;
-			SerialPrintln((String)volumesize, DebugPC);
-			SerialPrintln("Volume size (Mbytes): ", DebugPC);
+			Serial.println((String)volumesize);
+			Serial.println("Volume size (Mbytes): ");
 			volumesize /= 1024;
-			SerialPrintln((String)volumesize, DebugPC);
+			Serial.println((String)volumesize);
 
 
 
 
 			//Zeige alle Files | Datum | Größe an
-			if (DebugPC == true)
-			{
-				SerialPrintln("\nFiles found on the card (name, date and size in bytes): ", DebugPC);
-				root.openRoot(volume);
-				root.ls(LS_R | LS_DATE | LS_SIZE);
-			}
+
+			Serial.println("\nFiles found on the card (name, date and size in bytes): ");
+			root.openRoot(volume);
+			root.ls(LS_R | LS_DATE | LS_SIZE);
 
 			if (SD.begin(SD_chipSelect))
 			{
@@ -113,4 +111,3 @@ int SDInit(const char* FileName, boolean DebugPC)
 
 	return retVal;
 }
-

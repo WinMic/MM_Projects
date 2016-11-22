@@ -22,7 +22,7 @@
 extern "C" {
 #endif
 
-int SDInit(const char*, boolean);
+int SDInit(const char*);
 
 #ifdef __cplusplus
 } // extern "C"
