@@ -9,6 +9,7 @@
 //Includes
 #include "MM_MPU6050.h"
 
+
 //#############################
 //Objects                     #
 //#############################
@@ -23,7 +24,7 @@ int MPUInit(boolean DebugPC)
 {
 	int retVal = MM_UNDEFINED_ERROR;
 
-    SerialPrintln("Initializing I2C devices...", DebugPC);
+    Serial.println("Initializing I2C devices...");
     accelgyro.initialize();
 
     if (accelgyro.testConnection())
@@ -32,7 +33,7 @@ int MPUInit(boolean DebugPC)
 	}
     else
     {
-    	SerialPrintln("MPU nicht initialisiert!", DebugPC);
+    	Serial.println("MPU nicht initialisiert!");
     	retVal = MM_MPU_INIT_ERROR;
     }
 
