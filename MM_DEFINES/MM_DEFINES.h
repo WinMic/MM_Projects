@@ -13,7 +13,8 @@ enum MM_ERRORS{MM_SUCCESS, MM_UNDEFINED_ERROR,
 /*CardReader*/ MM_SD_NO_CARDREADER, MM_SD_WRONG_FORMAT, MM_SD_NO_FILE_POINTER,
 /*Barometer*/  MM_BMP085_INIT_ERROR,
 /*MPU*/		   MM_MPU_INIT_ERROR,
-/*Kompass*/	   MM_HMC_INIT_ERROR};
+/*Kompass*/	   MM_HMC_INIT_ERROR,
+/*GPS*/		   MM_GPS_ERROS};
 
 #ifdef __cplusplus
 extern "C" {
