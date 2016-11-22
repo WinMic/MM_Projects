@@ -29,6 +29,8 @@ struct GPSValues
 
 
 void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
+void initGPS();
+GPSValues readGPS();
 
 
 //Do not add code below this line
