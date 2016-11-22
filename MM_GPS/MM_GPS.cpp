@@ -46,7 +46,8 @@ GPSValues readGPS()
 	GPS.read();
 
 	// if a sentence is received, we can check the checksum, parse it...
-	  if (GPS.newNMEAreceived()) {
+	  if (GPS.newNMEAreceived())
+	  {
 	    // a tricky thing here is if we print the NMEA sentence, or data
 	    // we end up not listening and catching other sentences!
 	    // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
@@ -66,54 +67,26 @@ GPSValues readGPS()
 
 
 	    myGPSData.hour = (int)GPS.hour;
-//	    Serial.print(GPS.hour, DEC); Serial.print(':');
-
 	    myGPSData.minute = (int)GPS.minute;
-//	    Serial.print(GPS.minute, DEC); Serial.print(':');
-
 	    myGPSData.seconds = (int)GPS.seconds;
-//	    Serial.print(GPS.seconds, DEC); Serial.print('.');
-
 	    myGPSData.milliseconds = (int)GPS.milliseconds;
-//	    Serial.println(GPS.milliseconds);
-
 	    myGPSData.day = (int)GPS.day;
-//	    Serial.print(GPS.day, DEC); Serial.print('/');
-
 	    myGPSData.month = (int)GPS.month;
-//	    Serial.print(GPS.month, DEC); Serial.print("/20");
-
 	    myGPSData.year = (int)GPS.year;
-//	    Serial.println(GPS.year, DEC);
-
 	    myGPSData.fix = GPS.fix;
-//	    Serial.print("Fix: "); Serial.print((int)GPS.fix);
-
 	    myGPSData.fixquality = (int)GPS.fixquality;
-//	    Serial.print(" Qualität: "); Serial.println((int)GPS.fixquality);
-
 		//
 	    if (GPS.fix)
 	    {
 	    	myGPSData.status = MM_SUCCESS;
 	    	myGPSData.latitude = GPS.latitude;
-//	        Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
-
 	    	myGPSData.longitude = GPS.longitude;
-//	        Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
 
 	    	//Von Knoten auf km/h
 	    	myGPSData.speed = GPS.speed*1.852;
-//			Serial.print("Speed (knots): "); Serial.println(GPS.speed);
-
 	    	myGPSData.angle = GPS.angle;
-//			Serial.print("Angle: "); Serial.println(GPS.angle);
-
 	    	myGPSData.altitude = GPS.altitude;
-//			Serial.print("Altitude: "); Serial.println(GPS.altitude);
-
 	    	myGPSData.satellites = (int)GPS.satellites;
-//			Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
 	    }
 
 //		  Serial.print(myGPSData.hour); Serial.print("h ");
