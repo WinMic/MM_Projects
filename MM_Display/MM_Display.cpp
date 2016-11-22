@@ -1,4 +1,5 @@
 // Do not remove the include below
+//#include "MM_Display.h"
 #include "MM_Display.h"
 
 //#############################
@@ -145,70 +146,67 @@ int DisplayMaster(String sText, boolean DebugDisplay)
 }
 
 
-int TFTInit(boolean DebugPC)
+int TFTInit()
 {
 	short retVal = MM_UNDEFINED_ERROR;
 
-	if (DebugPC == true)
+	Serial.println("TFT LCD test");
+	Serial.println("Using Adafruit 2.8\" TFT Breakout Board Pinout");
+	Serial.println("TFT size is ");
+	Serial.println((String)tft.width());
+	Serial.println("x");
+	Serial.println((String)tft.height());
+
+	tft.reset();
+
+	uint16_t identifier = tft.readID();
+
+	if(identifier == 0x9325)
 	{
-
-		  SerialPrintln("TFT LCD test", DebugPC);
-		  SerialPrintln("Using Adafruit 2.8\" TFT Breakout Board Pinout", DebugPC);
-		  SerialPrintln("TFT size is ", DebugPC);
-		  SerialPrintln((String)tft.width(), DebugPC);
-		  SerialPrintln("x", DebugPC);
-		  SerialPrintln((String)tft.height(), DebugPC);
-
-		  tft.reset();
-
-		  uint16_t identifier = tft.readID();
-
-		  if(identifier == 0x9325)
-		  {
-		    SerialPrintln("Found ILI9325 LCD driver", DebugPC);
-		    retVal = MM_SUCCESS;
-		  }
-		  else if(identifier == 0x9328)
-		  {
-		    SerialPrintln("Found ILI9328 LCD driver", DebugPC);
-		    retVal = MM_SUCCESS;
-		  }
-		  else if(identifier == 0x7575)
-		  {
-		    SerialPrintln("Found HX8347G LCD driver", DebugPC);
-		    retVal = MM_SUCCESS;
-		  }
-		  else if(identifier == 0x9341)
-		  {
-		    SerialPrintln("Found ILI9341 LCD driver", DebugPC);
-		    retVal = MM_SUCCESS;
-		  }
-		  else if(identifier == 0x8357)
-		  {
-		    SerialPrintln("Found HX8357D LCD driver", DebugPC);
-		    retVal = MM_SUCCESS;
-		  }
-		  else
-		  {
-		    SerialPrintln("Unknown LCD driver chip: ", DebugPC);
-
-		    //Serial.println(identifier, HEX);
-		    SerialPrintln((String)identifier, DebugPC);
-		    SerialPrintln("If using the Adafruit 2.8\" TFT Arduino shield, the line:", DebugPC);
-		    SerialPrintln("  #define USE_ADAFRUIT_SHIELD_PINOUT", DebugPC);
-		    SerialPrintln("should appear in the library header (Adafruit_TFT.h).", DebugPC);
-		    SerialPrintln("If using the breakout board, it should NOT be #defined!", DebugPC);
-		    SerialPrintln("Also if using the breakout, double-check that all wiring", DebugPC);
-		    SerialPrintln("matches the tutorial.", DebugPC);
-		    retVal = MM_TFT_NO_DISPLAY;
-
-		  }
-
-		  tft.setRotation(TFT_ROTATION);
-		  tft.fillScreen(WHITE);
-		  tft.setTextColor(BLACK);
-		  tft.setTextSize(TFT_TEXT_SIZE);
-		  tft.begin(identifier);
+	Serial.println("Found ILI9325 LCD driver");
+	retVal = MM_SUCCESS;
 	}
+	else if(identifier == 0x9328)
+	{
+	Serial.println("Found ILI9328 LCD driver");
+	retVal = MM_SUCCESS;
+	}
+	else if(identifier == 0x7575)
+	{
+	Serial.println("Found HX8347G LCD driver");
+	retVal = MM_SUCCESS;
+	}
+	else if(identifier == 0x9341)
+	{
+	Serial.println("Found ILI9341 LCD driver");
+	retVal = MM_SUCCESS;
+	}
+	else if(identifier == 0x8357)
+	{
+	Serial.println("Found HX8357D LCD driver");
+	retVal = MM_SUCCESS;
+	}
+	else
+	{
+	Serial.println("Unknown LCD driver chip: ");
+
+	//Serial.println(identifier, HEX);
+	Serial.println((String)identifier);
+	Serial.println("If using the Adafruit 2.8\" TFT Arduino shield, the line:");
+	Serial.println("  #define USE_ADAFRUIT_SHIELD_PINOUT");
+	Serial.println("should appear in the library header (Adafruit_TFT.h).");
+	Serial.println("If using the breakout board, it should NOT be #defined!");
+	Serial.println("Also if using the breakout, double-check that all wiring");
+	Serial.println("matches the tutorial.");
+	retVal = MM_TFT_NO_DISPLAY;
+
+	}
+
+	tft.setRotation(TFT_ROTATION);
+	tft.fillScreen(WHITE);
+	tft.setTextColor(BLACK);
+	tft.setTextSize(TFT_TEXT_SIZE);
+	tft.begin(identifier);
+
 	return retVal;
   }
