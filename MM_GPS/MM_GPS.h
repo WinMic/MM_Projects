@@ -9,16 +9,18 @@
 #include "Arduino.h"
 #include <Adafruit_GPS.h>
 #include <string.h>
-#include "MM_DEFINES"
+#include "MM_DEFINES.h"
 
 //   GPS TX to Arduino Due Serial1 RX pin 19
 //   GPS RX to Arduino Due Serial1 TX pin 18
 #define mySerial Serial1
 
+#define DEBUGLIB true
+
 //GPS ECHO (RAW-Daten auf die Console schreiben)
 #define GPSECHO  false
 
-struct GPSValues
+typedef struct GPSValues
 {
 	boolean status = MM_UNDEFINED_ERROR;
 	int hour, minute, seconds, year, month, day, milliseconds, fixquality, satellites = 0;
@@ -29,8 +31,14 @@ struct GPSValues
 
 
 void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
-void initGPS();
-GPSValues readGPS();
+
+#ifdef DEBUGLIB
+	void setup();
+	void loop();
+#else
+	void initGPS();
+	GPSValues readGPS();
+#endif
 
 
 //Do not add code below this line
