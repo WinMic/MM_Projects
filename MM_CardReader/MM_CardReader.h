@@ -22,7 +22,15 @@
 extern "C" {
 #endif
 
-int SDInit(const char*);
+typedef struct CardReaderReturn
+{
+	boolean cardStatus;
+	File myFilePointer;
+};
+
+CardReaderReturn SDInit(const char*);
+
+
 
 #ifdef __cplusplus
 } // extern "C"

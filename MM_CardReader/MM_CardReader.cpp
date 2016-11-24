@@ -9,9 +9,10 @@ static SdFile root;
 const int SD_chipSelect = 4;
 File myFile;
 
-int SDInit(const char* FileName)
+CardReaderReturn SDInit(const char* FileName)
 {
-	short retVal = MM_UNDEFINED_ERROR;
+	CardReaderReturn retVal;
+	retVal.cardStatus = MM_UNDEFINED_ERROR;
 	Serial.println("\nInitializing SD card...");
 
 	pinMode(SD_chipSelect, OUTPUT);     //Arduino Due SD_chipSelect ist Pin 4 (Siehe PinOut)
@@ -24,12 +25,12 @@ int SDInit(const char* FileName)
 		Serial.println("* is a card is inserted?");
 		Serial.println("* Is your wiring correct?");
 		Serial.println("* did you change the chipSelect pin to match your shield or module?");
-		retVal = MM_SD_NO_CARDREADER;
+		retVal.cardStatus = MM_SD_NO_CARDREADER;
 	}
 	else
 	{
 		Serial.println("Wiring is correct and a card is present.");
-		retVal = MM_SUCCESS;
+		retVal.cardStatus = MM_SUCCESS;
 
 
 		//Gebe den SDKarten Typ aus
@@ -57,7 +58,7 @@ int SDInit(const char* FileName)
 		{
 			Serial.println("Could not find FAT16/FAT32 partition. Make sure you've formatted the card");
 
-			retVal = MM_SD_WRONG_FORMAT;
+			retVal.cardStatus = MM_SD_WRONG_FORMAT;
 		}
 		else
 		{
@@ -96,11 +97,12 @@ int SDInit(const char* FileName)
 				myFile = SD.open(FileName, FILE_WRITE);
 				if (myFile)
 				{
-					retVal = MM_SUCCESS;
+					retVal.cardStatus = MM_SUCCESS;
+					retVal.myFilePointer = myFile;
 				}
 				else
 				{
-					retVal = MM_SD_NO_FILE_POINTER;
+					retVal.cardStatus = MM_SD_NO_FILE_POINTER;
 				}
 
 			}
