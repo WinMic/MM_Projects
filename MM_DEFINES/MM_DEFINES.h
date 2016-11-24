@@ -14,7 +14,7 @@ enum MM_ERRORS{MM_SUCCESS, MM_UNDEFINED_ERROR,
 /*Barometer*/  MM_BMP085_INIT_ERROR,
 /*MPU*/		   MM_MPU_INIT_ERROR,
 /*Kompass*/	   MM_HMC_INIT_ERROR,
-/*GPS*/		   MM_GPS_ERROS};
+/*GPS*/		   MM_GPS_ERROR};
 
 #ifdef __cplusplus
 extern "C" {
