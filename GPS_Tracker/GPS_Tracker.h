@@ -7,10 +7,13 @@
 #ifndef _GPS_Tracker_H_
 #define _GPS_Tracker_H_
 #include "Arduino.h"
+#include <Wire.h>
+
+#include "MM_CardReader.h"
 #include "MM_Display.h"
 #include "MM_DEFINES.h"
-#include <Wire.h>
-#include <HMC6352.h>
+#include "MM_GPS.h"
+
 
 
 

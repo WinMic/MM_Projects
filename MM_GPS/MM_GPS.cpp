@@ -6,21 +6,63 @@ Adafruit_GPS GPS(&mySerial);
 
 //Keine Interrupts
 boolean usingInterrupt = false;
-#ifdef DEBUGLIB
-	void setup()
-#else
-	void initGPS()
-#endif
-{
+
+
+	GPSValues myGpsData;
+	GPSValues *p_myGpsData;
 
 #ifdef DEBUGLIB
-  Serial.begin(115200);
-  Serial.println("MM GPSLib test");
+	void setup()
+	{
+		Serial.begin(115200);
+		Serial.println("MM GPSLib test");
+		initGPS();
+	}
 #endif
+
+#ifdef DEBUGLIB
+	void loop()
+	{
+
+
+		readGPS(p_myGpsData);
+
+
+		Serial.print(p_myGpsData->hour); Serial.print("h ");
+		Serial.print(p_myGpsData->minute); Serial.print("m ");
+		Serial.print(p_myGpsData->seconds); Serial.print("s ");
+		Serial.print(p_myGpsData->milliseconds); Serial.println("ms ");
+		Serial.print(p_myGpsData->day); Serial.print(".");
+		Serial.print(p_myGpsData->month); Serial.print(".");
+		Serial.print(p_myGpsData->year);
+
+		Serial.print("fix: "); Serial.print(p_myGpsData->fix);
+		Serial.print(" qualety: "); Serial.println(p_myGpsData->fixquality);
+
+		Serial.print("lat: ");  Serial.println(p_myGpsData->latitude);
+		Serial.print("lon: "); Serial.println(p_myGpsData->longitude);
+		Serial.print("Speed: "); Serial.println(p_myGpsData->speed);
+		Serial.print("angle: "); Serial.println(p_myGpsData->angle);
+		Serial.print("höhe: "); Serial.println(p_myGpsData->altitude);
+		Serial.print("satellites: "); Serial.println(p_myGpsData->satellites);
+		Serial.println("");
+		Sleep(2000);
+	}
+#endif
+
+
+//void initGPS()
+	void initGPS()
+{
+	Serial.begin(115200);
+	Serial.println("setup");
+
 
   // 9600 NMEA is the default baud rate for Adafruit MTK GPS's- some use 4800
   GPS.begin(9600);
   mySerial.begin(9600);
+
+
 
   // uncomment this line to turn on RMC (recommended minimum) and GGA (fix data) including altitude
   GPS.sendCommand(PMTK_SET_NMEA_OUTPUT_RMCGGA);
@@ -48,18 +90,10 @@ boolean usingInterrupt = false;
  * sobald wir das GPS Modul auslesen, bevor 2Sekunden vorbei sind, warten wir einfach die differenzZeit
  */
 uint32_t timer = millis();
-#ifdef DEBUGLIB
-	void loop()
-	{
-		GPSValues myGpsData;
-		GPSValues *p_myGpsData;
-		p_myGpsData = &myGpsData;
-#else
-	void readGPS(GPSValues *p_myGpsData)
-	{
-#endif
 
-
+void readGPS(GPSValues* p_myGpsData)
+{
+	Serial.println("loop");
 	GPS.read();
 
 	// if a sentence is received, we can check the checksum, parse it...
@@ -70,18 +104,40 @@ uint32_t timer = millis();
     // so be very wary if using OUTPUT_ALLDATA and trytng to print out data
     //Serial.println(GPS.lastNMEA());   // this also sets the newNMEAreceived() flag to false
 
-    if (!GPS.parse(GPS.lastNMEA()))   // this also sets the newNMEAreceived() flag to false
-    	p_myGpsData->status = MM_GPS_ERROR;  // we can fail to parse a sentence in which case we should just wait for another
+		if (!GPS.parse(GPS.lastNMEA()))  // this also sets the newNMEAreceived() flag to false
+		{
+			p_myGpsData->status = MM_GPS_ERROR; // we can fail to parse a sentence in which case we should just wait for another
+			GPS.read();
+		}
 	}
 
 //  if millis() or timer wraps around, we'll just reset it
-	if (timer > millis())
-	{
-		timer = millis();
-	}
+	if (timer > millis())  timer = millis();
 
 	if(p_myGpsData->status != MM_GPS_ERROR)
 	{
+		Serial.print("dies sind wie werte direkt aus dem GPS Objekt ");
+	    Serial.print("\nTime: ");
+	    Serial.print(GPS.hour, DEC); Serial.print(':');
+	    Serial.print(GPS.minute, DEC); Serial.print(':');
+	    Serial.print(GPS.seconds, DEC); Serial.print('.');
+	    Serial.println(GPS.milliseconds);
+	    Serial.print("Date: ");
+	    Serial.print(GPS.day, DEC); Serial.print('/');
+	    Serial.print(GPS.month, DEC); Serial.print("/20");
+	    Serial.println(GPS.year, DEC);
+	    Serial.print("Fix: "); Serial.print((int)GPS.fix);
+	    Serial.print(" quality: "); Serial.println((int)GPS.fixquality);
+		Serial.print("Location: ");
+		Serial.print(GPS.latitude, 4); Serial.print(GPS.lat);
+		Serial.print(", ");
+		Serial.print(GPS.longitude, 4); Serial.println(GPS.lon);
+
+		Serial.print("Speed (knots): "); Serial.println(GPS.speed);
+		Serial.print("Angle: "); Serial.println(GPS.angle);
+		Serial.print("Altitude: "); Serial.println(GPS.altitude);
+		Serial.print("Satellites: "); Serial.println((int)GPS.satellites);
+		Serial.println(" ");
 		/*
 		 * Wenn das Programm auf den Arduino an dieser Stelle wieder ankommt, und dafür weniger als 2Sec gebraucht hat
 		 * Warten wir die Zeit, bis 2 Sec verstrichen sind.
@@ -124,27 +180,6 @@ uint32_t timer = millis();
 				p_myGpsData->altitude = GPS.altitude;
 				p_myGpsData->satellites = (int)GPS.satellites;
 			}
-
-#ifdef DEBUGLIB
-			Serial.print(p_myGpsData->hour); Serial.print("h ");
-			Serial.print(p_myGpsData->minute); Serial.print("m ");
-			Serial.print(p_myGpsData->seconds); Serial.print("s ");
-			Serial.print(p_myGpsData->milliseconds); Serial.println("ms ");
-			Serial.print(p_myGpsData->day); Serial.print(".");
-			Serial.print(p_myGpsData->month); Serial.print(".");
-			Serial.print(p_myGpsData->year);
-
-			Serial.print("fix: "); Serial.print(p_myGpsData->fix);
-			Serial.print(" qualety: "); Serial.println(p_myGpsData->fixquality);
-
-			Serial.print("lat: ");  Serial.println(p_myGpsData->latitude);
-			Serial.print("lon: "); Serial.println(p_myGpsData->longitude);
-			Serial.print("Speed: "); Serial.println(p_myGpsData->speed);
-			Serial.print("angle: "); Serial.println(p_myGpsData->angle);
-			Serial.print("höhe: "); Serial.println(p_myGpsData->altitude);
-			Serial.print("satellites: "); Serial.println(p_myGpsData->satellites);
-			Serial.println("");
-#endif
 		}
 	}
 }
