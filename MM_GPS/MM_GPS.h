@@ -14,7 +14,7 @@
 //   GPS RX to Arduino Due Serial1 TX pin 18
 #define mySerial Serial1
 
-#define no_DEBUGLIB
+#define DEBUGLIB
 
 //GPS ECHO (RAW-Daten auf die Console schreiben)
 #define GPSECHO  false
@@ -38,6 +38,9 @@ void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 
 void initGPS();
 void readGPS(GPSValues*);
+
+
+char *dtostrf (double, signed char, unsigned char, char*);
 
 
 
