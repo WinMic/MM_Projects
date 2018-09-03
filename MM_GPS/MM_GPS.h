@@ -16,7 +16,7 @@
 
 #define DEBUGLIB
 
-//GPS ECHO (RAW-Daten auf die Console schreiben)
+//GPS ECHO (RAW-Daten auf die Console schreiben) true || false!
 #define GPSECHO  false
 
 typedef struct GPSValues

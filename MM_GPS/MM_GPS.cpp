@@ -8,7 +8,7 @@ Adafruit_GPS GPS(&mySerial);
 
 GPSValues myGpsData;
 GPSValues *p_myGpsData;
-String sentence = "";
+
 
 #ifdef DEBUGLIB
     void setup()
@@ -54,69 +54,117 @@ void initGPS()
       // Ask for firmware version
       mySerial.println(PMTK_Q_RELEASE);
 }
-//from http://bradsduino.blogspot.com/2013/06/adafruit-ultimate-gps-breakout-arduino.html
+//Thx to http://bradsduino.blogspot.com/2013/06/adafruit-ultimate-gps-breakout-arduino.html
 void readGPS(GPSValues* p_myGpsData)
 {
-    if (Serial1.available() > 0)
+    static String sentence = ""; //static to keep an unfinished sentence
+
+    char data[85];  //maximum length of NMEA-0183 sentence is 82 byte
+    char *dataPtr = data;
+    char *value;
+    //how many chars available?
+    short readable = Serial1.available();
+
+    if (0 < readable)
     {
-        char c = Serial1.read();
-        // Check if end of NMEA sentence
-        if(c == '\n')
+        for (int i = 0; i <= readable; ++i)
         {
-            // Check if $GPRMC NMEA sentence
-            if(sentence.startsWith("$GPRMC"))
+            char c = Serial1.read();
+            // Check if end of NMEA sentence. If yes start validation of sentence
+            if(c == '\n')
             {
-                char data[150];
-                char *dataPtr = data;
-                char *value;
-                sentence.toCharArray(data, sentence.length());
-                int i = 0;
-                // Tokensize each line into values using comma delimiter.
-                // Returns NULL when no more tokens.
-                // strtok_r is part of C standard library.
-                while ((value = strtok_r(dataPtr, ",", &dataPtr)) != NULL)
+                // Check if $GPRMC NMEA sentence
+                if(sentence.startsWith("$GPRMC"))
                 {
-                    // 4th value is north latitude, 6th is west longitude
-                    if (i == 1)
+                    sentence.toCharArray(data, sentence.length());
+                    int j = 0;
+                    // Tokensize each line into values using comma delimiter.
+                    // Returns NULL when no more tokens.
+                    // strtok_r is part of C standard library.
+                    while ((value = strtok_r(dataPtr, ",", &dataPtr)) != NULL)
                     {
-                        myGpsData.hour = atoi(value)/10000;
-                        myGpsData.minute = (atoi(value) - 10000*myGpsData.hour) / 100;
-                        myGpsData.seconds = (atoi(value) - 10000*myGpsData.hour - 100*myGpsData.minute);
-                        Serial.println("Stunde: "); Serial.println(myGpsData.hour);
-                        Serial.println("Minute: "); Serial.println(myGpsData.minute);
-                        Serial.println("Sekunde: "); Serial.println(myGpsData.seconds);
-                    }
-                    if(i == 3 || i == 5)
-                    {
-                        int degMin = atoi(value);
-                        int degree = (int) degMin / 100;
-                        int minutes = degMin - (degree * 100);
-                        float seconds = (float) (atof(value) - (float) degMin) * 60.0;
-                        String label;
-                        if(i == 3)
+                        switch (j)
                         {
-                            label = " N";
+                            case 0:
+                                //NOOP first value is $GPRMC
+                                break;
+
+                            case 1:
+                                //extract time (Note UTC-timeformat)
+                                myGpsData.hour = atoi(value)/10000;
+                                myGpsData.minute = (atoi(value) - 10000*myGpsData.hour) / 100;
+                                myGpsData.seconds = (atoi(value) - 10000*myGpsData.hour - 100*myGpsData.minute);
+#if GPSECHO
+                                Serial.println("Stunde: "); Serial.println(myGpsData.hour);
+                                Serial.println("Minute: "); Serial.println(myGpsData.minute);
+                                Serial.println("Sekunde: "); Serial.println(myGpsData.seconds);
+#endif
+                                break;
+
+                            case 2:
+                                if ('A' == *value)
+                                {
+                                    myGpsData.status = true;
+                                } else if ('V' == *value)
+                                {
+                                    myGpsData.status = false;
+                                }
+                                else
+                                    myGpsData.status = false;
+                                //TODO: set failure returnvalue
+
+                                break;
+                            case 3:
+                            case 5:
+                                int degMin = atoi(value);
+                                int degree = (int) degMin / 100;
+                                int minutes = degMin - (degree * 100);
+
+                                float seconds = (float) (atof(value) - (float) degMin) * 60.0;
+                                String label;
+                                if(j == 3)
+                                {
+                                    label = " N";
+                                }
+                                else
+                                {
+                                    label = " E";
+                                }
+                                char secBuffer[6];
+                                dtostrf(seconds, 6, 3, secBuffer);
+                                char location[100];
+                                sprintf(location, "%02d\xB0 %02d' %s\"", degree, minutes, secBuffer);
+                                Serial.println(location + label);
+                                break;
+
+                            case 7:
+                                myGpsData.speed = atoi(value)*1,852;
+                                break;
+
+                            case 8:
+                                myGpsData.angle = atoi(value);
+                                break;
+
+                            case 9:
+                                myGpsData.day = atoi(value)/10000;
+                                myGpsData.month =(atoi(value) - 10000*myGpsData.day) / 100;
+                                myGpsData.year =(atoi(value) - 10000*myGpsData.month - 100*myGpsData.day);
+                                break;
+
+                            default:
+                                break;
                         }
-                        else
-                        {
-                            label = " E";
-                        }
-                        char secBuffer[6];
-                        dtostrf(seconds, 6, 3, secBuffer);
-                        char location[100];
-                        sprintf(location, "%02d\xB0 %02d' %s\"", degree, minutes, secBuffer);
-                        Serial.println(location + label);
+                        j++;
                     }
-                    i++;
+                    Serial.println();
                 }
-                Serial.println();
+                sentence = "";
             }
-            sentence = "";
-        }
-        else
-        {
-            // Append character if not end of sentence
-            sentence += c;
+            else
+            {
+                // Append character if not end of sentence
+                sentence += c;
+            }
         }
     }
 }
