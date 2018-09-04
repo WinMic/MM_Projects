@@ -11,6 +11,7 @@
 #include "MPU60X0.h"
 #include "MM_DEFINES.h"
 
+#define no_DEBUGLIB
 
 //end of add your includes here
 #ifdef __cplusplus
