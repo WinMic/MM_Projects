@@ -16,9 +16,6 @@
 
 #define DEBUGLIB
 
-//GPS ECHO (RAW-Daten auf die Console schreiben) true || false!
-#define GPSECHO  false
-
 typedef struct GPSValues
 {
 	boolean status = MM_UNDEFINED_ERROR;
@@ -26,7 +23,7 @@ typedef struct GPSValues
 	// Floating point latitude and longitude value in degrees.
 	float latitude, longitude, altitude, speed, angle;
 	boolean fix;
-};
+}GPSValues;
 
 
 void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy

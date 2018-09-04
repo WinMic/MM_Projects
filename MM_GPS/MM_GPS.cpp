@@ -4,8 +4,6 @@
 Adafruit_GPS GPS(&mySerial);
 
 
-
-
 GPSValues myGpsData;
 GPSValues *p_myGpsData;
 
@@ -83,4 +81,3 @@ void readGPS(GPSValues* p_myGpsData)
         }
     }
 }
-
