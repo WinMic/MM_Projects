@@ -49,30 +49,7 @@ uint32_t timer = millis();
 		if (checkedGPS >= 10)
 		{
 			checkedGPS = 0;
-		    Serial.print("\nTime: ");
-		    Serial.print(p_myGpsData_debug->hour, DEC); Serial.print(':');
-		    Serial.print(p_myGpsData_debug->minute, DEC); Serial.print(':');
-		    Serial.print(p_myGpsData_debug->seconds, DEC); Serial.print('.');
-		    Serial.println(p_myGpsData_debug->milliseconds);
-		    Serial.print("Date: ");
-		    Serial.print(p_myGpsData_debug->day, DEC); Serial.print('/');
-		    Serial.print(p_myGpsData_debug->month, DEC); Serial.print("/20");
-		    Serial.println(p_myGpsData_debug->year, DEC);
-		    Serial.print("Fix: "); Serial.print((int)GPS.fix);
-		    Serial.print(" quality: "); Serial.println((int)GPS.fixquality);
-		    if (GPS.fix) {
-		      Serial.print("Location: ");
-		      Serial.print(p_myGpsData_debug->latitude, 4); Serial.print(GPS.lat);
-		      Serial.print(", ");
-		      Serial.print(p_myGpsData_debug->longitude, 4); Serial.println(GPS.lon);
-
-		      Serial.print("Speed (knots): "); Serial.println(p_myGpsData_debug->speed);
-		      Serial.print("Angle: "); Serial.println(p_myGpsData_debug->angle);
-		      Serial.print("Altitude: "); Serial.println(p_myGpsData_debug->altitude);
-		      Serial.print("Satellites: "); Serial.println((int)p_myGpsData_debug->satellites);
-
-
-		    }
+			printGPSData(p_myGpsData_debug);
 		    clearGPSData(p_myGpsData_debug);
 		}
 
@@ -195,4 +172,32 @@ void clearGPSData(GPSValues* p_myGpsData)
 	p_myGpsData->satellites = 0;
 
 	p_myGpsData->status = MM_GPS_ERROR;
+}
+
+void printGPSData(GPSValues* p_myGpsData)
+{
+    Serial.print("\nTime: ");
+    Serial.print(p_myGpsData->hour, DEC); Serial.print(':');
+    Serial.print(p_myGpsData->minute, DEC); Serial.print(':');
+    Serial.print(p_myGpsData->seconds, DEC); Serial.print('.');
+    Serial.println(p_myGpsData->milliseconds);
+    Serial.print("Date: ");
+    Serial.print(p_myGpsData->day, DEC); Serial.print('/');
+    Serial.print(p_myGpsData->month, DEC); Serial.print("/20");
+    Serial.println(p_myGpsData->year, DEC);
+    Serial.print("Fix: "); Serial.print((int)GPS.fix);
+    Serial.print(" quality: "); Serial.println((int)GPS.fixquality);
+    if (GPS.fix) {
+      Serial.print("Location: ");
+      Serial.print(p_myGpsData->latitude, 4); Serial.print(GPS.lat);
+      Serial.print(", ");
+      Serial.print(p_myGpsData->longitude, 4); Serial.println(GPS.lon);
+
+      Serial.print("Speed (knots): "); Serial.println(p_myGpsData->speed);
+      Serial.print("Angle: "); Serial.println(p_myGpsData->angle);
+      Serial.print("Altitude: "); Serial.println(p_myGpsData->altitude);
+      Serial.print("Satellites: "); Serial.println((int)p_myGpsData->satellites);
+
+
+    }
 }

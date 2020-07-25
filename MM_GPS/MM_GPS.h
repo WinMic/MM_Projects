@@ -33,6 +33,7 @@ typedef struct GPSValues
 
 void initGPS();
 void readGPS(GPSValues*);
+void clearGPSData(GPSValues*);
 
 
 
