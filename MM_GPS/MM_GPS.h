@@ -12,9 +12,9 @@
 
 //   GPS TX to Arduino Due Serial1 RX pin 19
 //   GPS RX to Arduino Due Serial1 TX pin 18
-#define mySerial Serial1
+#define GPSSerial Serial1
 
-#define DEBUGLIB
+#define no_DEBUGLIB
 
 typedef struct GPSValues
 {
@@ -23,10 +23,8 @@ typedef struct GPSValues
 	// Floating point latitude and longitude value in degrees.
 	float latitude, longitude, altitude, speed, angle;
 	boolean fix;
-}GPSValues;
+};
 
-
-void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 
 #ifdef DEBUGLIB
 	void setup();
@@ -35,9 +33,6 @@ void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 
 void initGPS();
 void readGPS(GPSValues*);
-
-
-char *dtostrf (double, signed char, unsigned char, char*);
 
 
 
