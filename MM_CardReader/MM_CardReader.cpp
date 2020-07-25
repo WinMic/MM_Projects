@@ -17,7 +17,6 @@ CardReaderReturn SDInit(const char* FileName)
 
 	pinMode(SD_chipSelect, OUTPUT);     //Arduino Due SD_chipSelect ist Pin 4 (Siehe PinOut)
 
-
 	//Initialisiere den SD Card Reader
 	if (!card.init(SPI_HALF_SPEED, SD_chipSelect))
 	{
@@ -89,16 +88,21 @@ CardReaderReturn SDInit(const char* FileName)
 			Serial.println("\nFiles found on the card (name, date and size in bytes): ");
 			root.openRoot(volume);
 			root.ls(LS_R | LS_DATE | LS_SIZE);
-
+			Serial.print("creating file: "); Serial.println(FileName);
 			if (SD.begin(SD_chipSelect))
 			{
-
+				Serial.println("SD.begin - Success");
 				//File öffnen und FilePointer füllen
-				myFile = SD.open(FileName, FILE_WRITE);
+				myFile = SD.open(FileName, WRITEAPPENDCREATE);
 				if (myFile)
 				{
-					retVal.cardStatus = MM_SUCCESS;
-					retVal.myFilePointer = myFile;
+					Serial.println("Valid pointer");
+					if (SD.exists(FileName))
+					{
+						Serial.println("File Exists");
+						retVal.cardStatus = MM_SUCCESS;
+						retVal.myFilePointer = myFile;
+					}
 				}
 				else
 				{

@@ -30,6 +30,7 @@ typedef struct CardReaderReturn
 
 CardReaderReturn SDInit(const char*);
 
+#define WRITEAPPENDCREATE (0X10 | 0X04 | 0X02)	//ARDUINO-LIB CONSTS: O_CREAT | O_APPEND | O_WRITE
 
 
 #ifdef __cplusplus
