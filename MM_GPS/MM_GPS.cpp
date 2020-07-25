@@ -70,8 +70,13 @@ uint32_t timer = millis();
 		      Serial.print("Angle: "); Serial.println(p_myGpsData_debug->angle);
 		      Serial.print("Altitude: "); Serial.println(p_myGpsData_debug->altitude);
 		      Serial.print("Satellites: "); Serial.println((int)p_myGpsData_debug->satellites);
+
+
 		    }
+		    clearGPSData(p_myGpsData_debug);
 		}
+
+
 	}
 #endif
 
@@ -168,4 +173,26 @@ void readGPS(GPSValues* p_myGpsData)
 		}
 	}
 	//Serial.println("GPS: readGPS() - End");
+}
+
+void clearGPSData(GPSValues* p_myGpsData)
+{
+	p_myGpsData->hour = 0;
+	p_myGpsData->minute = 0;
+	p_myGpsData->seconds = 0;
+	p_myGpsData->milliseconds = 0;
+
+	p_myGpsData->day = 0;
+	p_myGpsData->month = 0;
+	p_myGpsData->year = 0;
+
+	p_myGpsData->latitude = 0.0F;
+	p_myGpsData->longitude = 0.0F;
+
+	p_myGpsData->speed = 0.0F;
+	p_myGpsData->angle = 0.0F;
+	p_myGpsData->altitude = 0.0F;
+	p_myGpsData->satellites = 0;
+
+	p_myGpsData->status = MM_GPS_ERROR;
 }
