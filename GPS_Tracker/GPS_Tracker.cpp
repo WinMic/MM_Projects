@@ -17,7 +17,7 @@
 #include "GPS_Tracker.h"
 
 //init Daten
-boolean DebugPC = true; //Soll Debug Info auf dem Display dargestellt werden
+boolean DebugPC = false; //Soll Debug Info auf dem Display dargestellt werden
 //TODO: DebugPC Variable muss durch Pinabfrage auf Arduino gesetzt werden -Hotswap Display-
 
 short displayStatus = MM_UNDEFINED_ERROR;
@@ -56,20 +56,20 @@ void setup()
 	initGPS();
 
 	//Versuche ein GPS Signal zu bekommen, damit die Logdatei das Datum als Namen bekommt
-	while(p_myGPSData->status != MM_SUCCESS)
+	while((p_myGPSData->status != MM_SUCCESS) || (p_myGPSData->day == 0))	//When day != 0 we have at least one satalite with a timestamp
 	{
-		DisplayMaster("GPS noch nicht Initialisiert\n", DebugPC);
-		Serial.println("GPS noch nicht Initialisiert");
-		delay(2500);
+		DisplayMaster("GPS nicht Initialisiert\n", DebugPC);
+		Serial.println("GPS nicht Initialisiert");
 		readGPS(p_myGPSData);
-
+		Serial.print("p_myGPSData->day: "); Serial.println(p_myGPSData->day);
 	}
 
 
 	//init CardReader
-	char * FileName = "";
-	String sFileName = "GPS_Log" + String(myGPSData.year, DEC) + "_" + String(myGPSData.month, DEC)+ "_" + String(myGPSData.day, DEC) + ".txt";
+	char FileName[13];	//FAT maximum filename length is 8.3!
+	String sFileName = String(myGPSData.year, DEC) + "_" + String(myGPSData.month, DEC)+ "_" + String(myGPSData.day, DEC) + ".txt";
 	sFileName.toCharArray(FileName, sFileName.length() + 1);
+	Serial.print("Filename: "); Serial.println(FileName);
 
 	CardReaderValue = SDInit(FileName);
 
@@ -94,61 +94,49 @@ void setup()
 
 void loop()
 {
-	p_myGPSData = &myGPSData;
-
+	static uint32_t timer = millis();
 	readGPS(p_myGPSData);
 
-	CardReaderValue.myFilePointer.print(myGPSData.hour); CardReaderValue.myFilePointer.print("h ");
-	CardReaderValue.myFilePointer.print(myGPSData.minute); CardReaderValue.myFilePointer.print("m ");
-	CardReaderValue.myFilePointer.print(myGPSData.seconds); CardReaderValue.myFilePointer.print("s ");
-	CardReaderValue.myFilePointer.print(myGPSData.milliseconds); CardReaderValue.myFilePointer.print("ms\n");
-	CardReaderValue.myFilePointer.print(myGPSData.day); CardReaderValue.myFilePointer.print(".");
-	CardReaderValue.myFilePointer.print(myGPSData.month); CardReaderValue.myFilePointer.print(".");
-	CardReaderValue.myFilePointer.print(myGPSData.year);
+	if (timer > millis()) { timer = millis(); }
 
-	CardReaderValue.myFilePointer.print("fix: "); CardReaderValue.myFilePointer.print(myGPSData.fix);
-	CardReaderValue.myFilePointer.print(" qualety: "); CardReaderValue.myFilePointer.print(myGPSData.fixquality);
-	CardReaderValue.myFilePointer.print("\n");
+	if ((millis() - timer > WRITE_EVERY_MILLIS_TO_FILE) && (p_myGPSData->status == MM_SUCCESS))
+	{
+		printGPSData(&myGPSData);
 
+		CardReaderValue.myFilePointer.print(myGPSData.day); CardReaderValue.myFilePointer.print(".");
+		CardReaderValue.myFilePointer.print(myGPSData.month); CardReaderValue.myFilePointer.print(".");
+		CardReaderValue.myFilePointer.print(myGPSData.year); CardReaderValue.myFilePointer.print(" - ");
 
-	CardReaderValue.myFilePointer.print("lat: ");  CardReaderValue.myFilePointer.print(myGPSData.latitude);
-	CardReaderValue.myFilePointer.print("\n");
+		CardReaderValue.myFilePointer.print(myGPSData.hour); CardReaderValue.myFilePointer.print("h ");
+		CardReaderValue.myFilePointer.print(myGPSData.minute); CardReaderValue.myFilePointer.print("m ");
+		CardReaderValue.myFilePointer.print(myGPSData.seconds); CardReaderValue.myFilePointer.print("s ");
+		CardReaderValue.myFilePointer.print(myGPSData.milliseconds); CardReaderValue.myFilePointer.print("ms\n");
 
-	CardReaderValue.myFilePointer.print("lon: "); CardReaderValue.myFilePointer.print(myGPSData.longitude);
-	CardReaderValue.myFilePointer.print("\n");
-
-	CardReaderValue.myFilePointer.print("Speed: "); CardReaderValue.myFilePointer.print(myGPSData.speed);
-	CardReaderValue.myFilePointer.print("\n");
-
-	CardReaderValue.myFilePointer.print("angle: "); CardReaderValue.myFilePointer.print(myGPSData.angle);
-	CardReaderValue.myFilePointer.print("\n");
-
-	CardReaderValue.myFilePointer.print("höhe: "); CardReaderValue.myFilePointer.print(myGPSData.altitude);
-	CardReaderValue.myFilePointer.print("\n");
-
-	CardReaderValue.myFilePointer.print("satellites: "); CardReaderValue.myFilePointer.print(myGPSData.satellites);
-	CardReaderValue.myFilePointer.print("\n");
+		CardReaderValue.myFilePointer.print("fix: "); CardReaderValue.myFilePointer.print(myGPSData.fix);
+		CardReaderValue.myFilePointer.print(" quality: "); CardReaderValue.myFilePointer.print(myGPSData.fixquality);
+		CardReaderValue.myFilePointer.print("\n");
 
 
+		CardReaderValue.myFilePointer.print("latitude: ");  CardReaderValue.myFilePointer.print(myGPSData.latitude);
+		CardReaderValue.myFilePointer.print("\n");
 
-	Serial.print(myGPSData.hour); Serial.print("h ");
-	Serial.print(myGPSData.minute); Serial.print("m ");
-	Serial.print(myGPSData.seconds); Serial.print("s ");
-	Serial.print(myGPSData.milliseconds); Serial.println("ms ");
-	Serial.print(myGPSData.day); Serial.print(".");
-	Serial.print(myGPSData.month); Serial.print(".");
-	Serial.print(myGPSData.year);
+		CardReaderValue.myFilePointer.print("longitude: "); CardReaderValue.myFilePointer.print(myGPSData.longitude);
+		CardReaderValue.myFilePointer.print("\n");
 
-	Serial.print("fix: "); Serial.print(myGPSData.fix);
-	Serial.print(" qualety: "); Serial.println(myGPSData.fixquality);
+		CardReaderValue.myFilePointer.print("speed: "); CardReaderValue.myFilePointer.print(myGPSData.speed);
+		CardReaderValue.myFilePointer.print("\n");
 
-	Serial.print("lat: ");  Serial.println(myGPSData.latitude);
-	Serial.print("lon: "); Serial.println(myGPSData.longitude);
-	Serial.print("Speed: "); Serial.println(myGPSData.speed);
-	Serial.print("angle: "); Serial.println(myGPSData.angle);
-	Serial.print("höhe: "); Serial.println(myGPSData.altitude);
-	Serial.print("satellites: "); Serial.println(myGPSData.satellites);
-	Serial.println("");
+		CardReaderValue.myFilePointer.print("angle: "); CardReaderValue.myFilePointer.print(myGPSData.angle);
+		CardReaderValue.myFilePointer.print("\n");
 
-	Sleep(2000);
+		CardReaderValue.myFilePointer.print("altitude: "); CardReaderValue.myFilePointer.print(myGPSData.altitude);
+		CardReaderValue.myFilePointer.print("\n");
+
+		CardReaderValue.myFilePointer.print("satellites: "); CardReaderValue.myFilePointer.print(myGPSData.satellites);
+		CardReaderValue.myFilePointer.print("\n");CardReaderValue.myFilePointer.print("\n");
+		CardReaderValue.myFilePointer.flush();
+
+		clearGPSData(p_myGPSData);
+	}
+
 }
