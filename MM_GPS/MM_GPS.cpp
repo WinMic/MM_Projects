@@ -140,7 +140,9 @@ void readGPS(GPSValues* p_myGpsData)
 			if (GPS.fix)
 			{
 				p_myGpsData->latitude = GPS.latitude;
+				p_myGpsData->lat = GPS.lat;
 				p_myGpsData->longitude = GPS.longitude;
+				p_myGpsData->lon = GPS.lon;
 
 				p_myGpsData->speed = GPS.speed;
 				p_myGpsData->angle = GPS.angle;

@@ -22,6 +22,7 @@ typedef struct GPSValues
 	int hour, minute, seconds, year, month, day, milliseconds, fixquality, satellites;
 	// Floating point latitude and longitude value in degrees.
 	float latitude, longitude, altitude, speed, angle;
+	char lat, lon;
 	boolean fix;
 };
 
@@ -34,6 +35,7 @@ typedef struct GPSValues
 void initGPS();
 void readGPS(GPSValues*);
 void clearGPSData(GPSValues*);
+void printGPSData(GPSValues*);
 
 
 
