@@ -22,10 +22,12 @@ boolean DebugPC = false; //Soll Debug Info auf dem Display dargestellt werden
 
 short displayStatus = MM_UNDEFINED_ERROR;
 CardReaderReturn CardReaderValue;
-short kompassStatus = MM_UNDEFINED_ERROR;
+short compassStatus = MM_UNDEFINED_ERROR;
 
 GPSValues myGPSData;
 GPSValues *p_myGPSData;
+
+magnetometerValues myCompassData;
 
 void setup()
 {
@@ -78,14 +80,39 @@ void setup()
 		case MM_SUCCESS:
 			DisplayMaster("CardReader Initialisiert\n", DebugPC);
 			Serial.println("CardReader Initialisiert");
+			CardReaderValue.myFilePointer.print("The following GPS coordinates are printed as followed:\n" \
+					"Lat: 4042.6142 --> 40 degrees, 42.6142 decimal minutes North:\n" \
+					"Lon: 07400.4168 --> 74 degrees, 00.4168 decimal minutes West\n" \
+					"Unfortunately gmaps requires you to use +/- instead of NSWE notation. N and E are positive, S and W are negative.\n\n");
 			break;
 
 		default:
 			DisplayError("CardReader Init-ERROR!", DebugPC);
 			Serial.println("CardReader Init-ERROR!");
+			while(1)
+			{
+				Serial.println("CardReader Init-ERROR!");
+				//TODO: Set Error LED and so not continue to loop()
+			}
 			break;
 	}
 
+	compassStatus = HMC5883lInit();
+	switch (compassStatus)
+	{
+		case MM_SUCCESS:
+			DisplayMaster("Compass initialisiert\n", DebugPC);
+			Serial.println("Compass initialisiert");
+			CardReaderValue.myFilePointer.print("Compass-heading is calculated with the magnetic declination of Munic\n" \
+					"for individual calculation please use RAW values and use individual magnetic declination --> http://www.magnetic-declination.com/ \n\n");
+			break;
+
+		default:
+			DisplayError("Compass Init-ERROR!", DebugPC);
+			Serial.println("Compass Init-ERROR!");
+			CardReaderValue.myFilePointer.print("Kompass Init-ERROR!\n");
+			break;
+	}
 
 
 }
@@ -96,6 +123,7 @@ void loop()
 {
 	static uint32_t timer = millis();
 	readGPS(p_myGPSData);
+	myCompassData = HMC5883lHeading();
 
 	if (timer > millis()) { timer = millis(); }
 
@@ -116,24 +144,32 @@ void loop()
 		CardReaderValue.myFilePointer.print(" quality: "); CardReaderValue.myFilePointer.print(myGPSData.fixquality);
 		CardReaderValue.myFilePointer.print("\n");
 
+		CardReaderValue.myFilePointer.print("Compass-RAW-angle X: "); CardReaderValue.myFilePointer.print(myCompassData.magneticX); CardReaderValue.myFilePointer.print("\n");
+		CardReaderValue.myFilePointer.print("Compass-RAW-angle Y: "); CardReaderValue.myFilePointer.print(myCompassData.magneticY); CardReaderValue.myFilePointer.print("\n");
+		CardReaderValue.myFilePointer.print("Compass-RAW-angle Z: "); CardReaderValue.myFilePointer.print(myCompassData.magneticZ); CardReaderValue.myFilePointer.print("\n");
+		CardReaderValue.myFilePointer.print("Compass-heading: "); CardReaderValue.myFilePointer.print(myCompassData.heading); CardReaderValue.myFilePointer.print("\n");
 
-		CardReaderValue.myFilePointer.print("latitude: ");  CardReaderValue.myFilePointer.print(myGPSData.latitude);
-		CardReaderValue.myFilePointer.print("\n");
+		if (myGPSData.fix) {
+			CardReaderValue.myFilePointer.print("GPS-angle: "); CardReaderValue.myFilePointer.print(myGPSData.angle); CardReaderValue.myFilePointer.print("\n");
+			CardReaderValue.myFilePointer.print("\n");
 
-		CardReaderValue.myFilePointer.print("longitude: "); CardReaderValue.myFilePointer.print(myGPSData.longitude);
-		CardReaderValue.myFilePointer.print("\n");
+			CardReaderValue.myFilePointer.print("latitude: ");  CardReaderValue.myFilePointer.print((double)myGPSData.latitude, 8);
+			CardReaderValue.myFilePointer.print(" "); CardReaderValue.myFilePointer.print(myGPSData.lat);
+			CardReaderValue.myFilePointer.print("\n");
 
-		CardReaderValue.myFilePointer.print("speed: "); CardReaderValue.myFilePointer.print(myGPSData.speed);
-		CardReaderValue.myFilePointer.print("\n");
+			CardReaderValue.myFilePointer.print("longitude: "); CardReaderValue.myFilePointer.print((double)myGPSData.longitude, 8);
+			CardReaderValue.myFilePointer.print(" "); CardReaderValue.myFilePointer.print(myGPSData.lon);
+			CardReaderValue.myFilePointer.print("\n");
 
-		CardReaderValue.myFilePointer.print("angle: "); CardReaderValue.myFilePointer.print(myGPSData.angle);
-		CardReaderValue.myFilePointer.print("\n");
+			CardReaderValue.myFilePointer.print("speed: "); CardReaderValue.myFilePointer.print(myGPSData.speed);
+			CardReaderValue.myFilePointer.print("\n");
 
-		CardReaderValue.myFilePointer.print("altitude: "); CardReaderValue.myFilePointer.print(myGPSData.altitude);
-		CardReaderValue.myFilePointer.print("\n");
+			CardReaderValue.myFilePointer.print("altitude: "); CardReaderValue.myFilePointer.print(myGPSData.altitude);
+			CardReaderValue.myFilePointer.print("\n");
 
-		CardReaderValue.myFilePointer.print("satellites: "); CardReaderValue.myFilePointer.print(myGPSData.satellites);
-		CardReaderValue.myFilePointer.print("\n");CardReaderValue.myFilePointer.print("\n");
+			CardReaderValue.myFilePointer.print("satellites: "); CardReaderValue.myFilePointer.print(myGPSData.satellites);
+			CardReaderValue.myFilePointer.print("\n");CardReaderValue.myFilePointer.print("\n");
+		}
 		CardReaderValue.myFilePointer.flush();
 
 		clearGPSData(p_myGPSData);
