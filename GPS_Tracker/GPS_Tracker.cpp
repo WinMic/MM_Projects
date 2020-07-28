@@ -69,11 +69,6 @@ void setup()
 		default:
 			Serial.println("CardReader Init-ERROR!");
 			errorflag = true;
-			while(1)
-			{
-				Serial.println("CardReader Init-ERROR!");
-				//TODO: Set Error LED and so not continue to loop()
-			}
 			break;
 	}
 
@@ -93,7 +88,13 @@ void setup()
 			break;
 	}
 
-	digitalWrite(ERROR_LED, HIGH);
+	if (errorflag) {
+		digitalWrite(ERROR_LED, errorflag);
+		while(errorflag)
+		{
+			;
+		}
+	}
 }
 
 
@@ -108,6 +109,7 @@ void loop()
 
 	if ((millis() - timer > WRITE_EVERY_MILLIS_TO_FILE) && (p_myGPSData->status == MM_SUCCESS))
 	{
+		timer = millis();
 		printGPSData(&myGPSData);
 
 		CardReaderValue.myFilePointer.print(myGPSData.day); CardReaderValue.myFilePointer.print(".");
@@ -130,7 +132,6 @@ void loop()
 
 		if (myGPSData.fix) {
 			CardReaderValue.myFilePointer.print("GPS-angle: "); CardReaderValue.myFilePointer.print(myGPSData.angle); CardReaderValue.myFilePointer.print("\n");
-			CardReaderValue.myFilePointer.print("\n");
 
 			CardReaderValue.myFilePointer.print("latitude: ");  CardReaderValue.myFilePointer.print((double)myGPSData.latitude, 8);
 			CardReaderValue.myFilePointer.print(" "); CardReaderValue.myFilePointer.print(myGPSData.lat);
@@ -140,7 +141,7 @@ void loop()
 			CardReaderValue.myFilePointer.print(" "); CardReaderValue.myFilePointer.print(myGPSData.lon);
 			CardReaderValue.myFilePointer.print("\n");
 
-			CardReaderValue.myFilePointer.print("speed: "); CardReaderValue.myFilePointer.print(myGPSData.speed);
+			CardReaderValue.myFilePointer.print("speed (km/h): "); CardReaderValue.myFilePointer.print(myGPSData.speed*1.852F);
 			CardReaderValue.myFilePointer.print("\n");
 
 			CardReaderValue.myFilePointer.print("altitude: "); CardReaderValue.myFilePointer.print(myGPSData.altitude);
@@ -149,9 +150,14 @@ void loop()
 			CardReaderValue.myFilePointer.print("satellites: "); CardReaderValue.myFilePointer.print(myGPSData.satellites);
 			CardReaderValue.myFilePointer.print("\n");CardReaderValue.myFilePointer.print("\n");
 		}
+		else
+		{
+			CardReaderValue.myFilePointer.print("\n");
+		}
 		CardReaderValue.myFilePointer.flush();
 
 		clearGPSData(p_myGPSData);
+
 	}
 
 }
