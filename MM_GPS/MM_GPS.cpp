@@ -139,6 +139,7 @@ void readGPS(GPSValues* p_myGpsData)
 
 			if (GPS.fix)
 			{
+				p_myGpsData->fix = GPS.fix;
 				p_myGpsData->latitude = GPS.latitude;
 				p_myGpsData->lat = GPS.lat;
 				p_myGpsData->longitude = GPS.longitude;
@@ -189,7 +190,7 @@ void printGPSData(GPSValues* p_myGpsData)
     Serial.println(p_myGpsData->year, DEC);
     Serial.print("Fix: "); Serial.print((int)GPS.fix);
     Serial.print(" quality: "); Serial.println((int)GPS.fixquality);
-    if (GPS.fix) {
+    if (p_myGpsData->fix) {
       Serial.print("Location: ");
       Serial.print(p_myGpsData->latitude, 4); Serial.print(GPS.lat);
       Serial.print(", ");
