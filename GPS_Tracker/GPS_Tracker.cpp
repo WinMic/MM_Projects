@@ -17,41 +17,23 @@
 #include "GPS_Tracker.h"
 
 //init Daten
-boolean DebugPC = false; //Soll Debug Info auf dem Display dargestellt werden
-//TODO: DebugPC Variable muss durch Pinabfrage auf Arduino gesetzt werden -Hotswap Display-
-
-short displayStatus = MM_UNDEFINED_ERROR;
 CardReaderReturn CardReaderValue;
 short compassStatus = MM_UNDEFINED_ERROR;
 
 GPSValues myGPSData;
 GPSValues *p_myGPSData;
 
+bool errorflag = false;
+
 magnetometerValues myCompassData;
 
 void setup()
 {
+	pinMode(ERROR_LED, OUTPUT);
 	CardReaderValue.cardStatus = MM_UNDEFINED_ERROR;
 
 	Serial.begin(115200);
 	Serial.println("Init");
-
-	//init Display
-	displayStatus = TFTInit();
-	switch (displayStatus)
-	{
-		case MM_SUCCESS:
-			DisplayMaster("Display Initialisiert\n", DebugPC);
-			Serial.println("Display Initialisiert");
-			break;
-
-		default:
-			DisplayError("Display Init-ERROR!", DebugPC);
-			Serial.println("Display Init-ERROR!");
-			DebugPC = false;
-			break;
-	}
-
 
 	//init GPS
 	p_myGPSData = &myGPSData;
@@ -60,7 +42,6 @@ void setup()
 	//Versuche ein GPS Signal zu bekommen, damit die Logdatei das Datum als Namen bekommt
 	while((p_myGPSData->status != MM_SUCCESS) || (p_myGPSData->day == 0))	//When day != 0 we have at least one satalite with a timestamp
 	{
-		DisplayMaster("GPS nicht Initialisiert\n", DebugPC);
 		Serial.println("GPS nicht Initialisiert");
 		readGPS(p_myGPSData);
 		Serial.print("p_myGPSData->day: "); Serial.println(p_myGPSData->day);
@@ -78,7 +59,6 @@ void setup()
 	switch (CardReaderValue.cardStatus)
 	{
 		case MM_SUCCESS:
-			DisplayMaster("CardReader Initialisiert\n", DebugPC);
 			Serial.println("CardReader Initialisiert");
 			CardReaderValue.myFilePointer.print("The following GPS coordinates are printed as followed:\n" \
 					"Lat: 4042.6142 --> 40 degrees, 42.6142 decimal minutes North:\n" \
@@ -87,8 +67,8 @@ void setup()
 			break;
 
 		default:
-			DisplayError("CardReader Init-ERROR!", DebugPC);
 			Serial.println("CardReader Init-ERROR!");
+			errorflag = true;
 			while(1)
 			{
 				Serial.println("CardReader Init-ERROR!");
@@ -101,20 +81,19 @@ void setup()
 	switch (compassStatus)
 	{
 		case MM_SUCCESS:
-			DisplayMaster("Compass initialisiert\n", DebugPC);
 			Serial.println("Compass initialisiert");
 			CardReaderValue.myFilePointer.print("Compass-heading is calculated with the magnetic declination of Munic\n" \
 					"for individual calculation please use RAW values and use individual magnetic declination --> http://www.magnetic-declination.com/ \n\n");
 			break;
 
 		default:
-			DisplayError("Compass Init-ERROR!", DebugPC);
 			Serial.println("Compass Init-ERROR!");
 			CardReaderValue.myFilePointer.print("Kompass Init-ERROR!\n");
+			errorflag = true;
 			break;
 	}
 
-
+	digitalWrite(ERROR_LED, HIGH);
 }
 
 

@@ -32,6 +32,8 @@ void setup();
 //add your function definitions for the project GPS_Tracker here
 #define WRITE_EVERY_MILLIS_TO_FILE 2500
 
+#define ERROR_LED 7
+
 
 
 //Do not add code below this line
