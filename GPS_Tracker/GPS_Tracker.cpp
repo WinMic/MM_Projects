@@ -88,11 +88,13 @@ void setup()
 			break;
 	}
 
+	CardReaderValue.myFilePointer.flush();
+	Serial.print("ErrorFlag is: "); Serial.println(errorflag);
 	if (errorflag) {
 		digitalWrite(ERROR_LED, errorflag);
 		while(errorflag)
 		{
-			;
+			Serial.println("Stuck in Errortrap");
 		}
 	}
 }

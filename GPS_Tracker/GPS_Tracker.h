@@ -10,7 +10,6 @@
 #include <Wire.h>
 
 #include "MM_CardReader.h"
-#include "MM_Display.h"
 #include "MM_DEFINES.h"
 #include "MM_GPS.h"
 #include "MM_HMC5883L.h"
