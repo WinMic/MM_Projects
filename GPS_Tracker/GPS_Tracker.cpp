@@ -1,16 +1,13 @@
 ///*Benoetigte Librarys:
 // *MM_DEFINES
 // *
-// *MM_Display
-// *Adafruit_GFX
-// *Adafruit_TFTLCD
 // *
 // *Adafruit_GPS
 // *
 // *SD (CardReader)
 // *SPI
 // *
-// *Sparfun HMC6352
+// *Sparfun HMC5883L
 // *Wire
 // *
 // */
